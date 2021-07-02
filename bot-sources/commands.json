@@ -1,0 +1,85 @@
+{
+    "Commands": {
+        "Data": [
+            {
+                "algorithms": "Retrieve list of supported algorithms.",
+                "encode": "Encode data via an encoding algorithm.",
+                "decode": "Decode data via an encoding algorithm.",
+                "hash": "Hash data via given algorithm.",
+                "hmac": "Use HMAC hashing with a given algorithm, key, and data.",
+                "brute": "Bruteforce an MD5, SHA256, or SHA512 hash, uses rockyou."
+            }
+        ],
+        "Administrative": [
+            {
+                "kick": "Kick a specified user with an optional reason.",
+                "ban": "Ban a specified user with an optional reason.",
+                "shred": "Deletes the amount of messages specified, already includes yours."
+            }
+        ],
+        "Fun": [
+            {
+                "random_choice": "Get Multi-Bot to make a random selection based on values separated by dashes.",
+                "cute_check": "Check the cuteness level of a specified user.",
+                "scramble": "Scrambles given text.",
+                "urandom": "Receive a urandom-generated number based on supplied bytes.",
+                "mct": "Measurements of Central Tendency (Mean, Median, and Mode) on values specified. Separate values with dashes.",
+                "whois": "Information on a user.",
+                "user_count": "Gets the users of the server.",
+                "roles": "Gets the roles of the current guild.",
+                "avatar": "Gets the avatar of a specified user, if none, then it'll grab yours.",
+                "change_nick": "Change a users nickname, requires valid perms to do so.",
+                "dm_member": "DM a specified member, message will be sent by Multi-Bot."
+            }
+        ],
+        "Games": [
+            {
+                "roll": "Roll a dice with a bet, if your bet is 1 higher, lower, or is equal to the roll, you win.",
+                "points": "Check how many Vyrix points you, or a specified member has.",
+                "give_points": "Transfer some points to a specified user.",
+                "clear_points": "Reset your Vyrix points to 0."
+            }
+        ],
+        "Misc": [
+            {
+                "invite": "Invite Vyrix to your server",
+                "guilds": "Get how many guilds Vyrix belongs to.",
+                "roo": "Get invite to Vyrix's best friend's bot.",
+                "info": "Information about Vyrix.",
+                "define": "Define a word.",
+                "synonyms": "Get the synonyms for a word.",
+                "uuid4": "Send a random uuid4 address.",
+                "ip_lookup": "Get IP information via ipinfo.io's API.",
+                "post": "Get a post from e621.net. NSFW images are only allowed in NSFW marked channels.",
+                "md5_to_post": "Get an e621 post ID based on its MD5sum.",
+                "req_key": "Request the owners PGP encryption key. Will be sent in DM.",
+                "gen_passwd": "Allows Multi-Bot to generate a safe password based on the length specified. (No extended ASCII!).",
+                "fetch": "Fetch an image from wallhaven.cc, only `Neko` allowed",
+                "salt": "Generate a bcrypt-style salt via given rounds. Defaults to 12.",
+                "identify": "Identify a given hash. (Finds algorithm. MD5, SHA256, etc..)"
+            }
+        ],
+        "Fernet": [
+            {
+                "gen_key": "Generate a Fernet encryption key.",
+                "regen_key": "Regenerate Fernet key.",
+                "encrypt": "Encrypt a string using your Fernet key.",
+                "decrypt": "Decrypt Fernet encrypted string using your Fernet key.",
+                "del_key": "Delete Fernet key.",
+                "my_key": "Request your Fernet key, sends in DM.",
+                "enable_multikey": "Enable multifernet keys (Automatically sets 5 keys).",
+                "disable_multikey": "Disable multifernet keys (Automatically sends new single key in DM).",
+                "rotate_msg": "Rotate a multifernet-encrypted message.",
+                "check_multi": "Check if multikey is enabled.",
+                "import_key": "Import a user's Fernet key.",
+                "list_keys": "List the *imported* keys attached to your account, and the IDs.",
+                "clear_keys": "Clear your list of imported keys.",
+                "encrypt_with": "Encrypt with an imported key. Syntax: ./encrypt_with <key_id> <message>.",
+                "decrypt_with": "Decrypt with an imported key. Syntax: ./decrypt_with <key_id> <message>.",
+                "key_override": "Override the amount of keys in your MultiFernet rotation.",
+                "gen_shared": "Generate new key specifically for sharing (recommended.).",
+                "rotation": "Check how many fernet keys you have in your MultiFernet rotation."
+            }
+        ]
+    }
+}

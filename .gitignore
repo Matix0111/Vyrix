@@ -1,0 +1,7 @@
+auth.ini
+encKeys.db
+gamedata.db
+.git/
+.gitattributes
+cogs/__pycache__/
+rockyou.txt
