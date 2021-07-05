@@ -346,14 +346,37 @@ async def ipLookup(context, ip=None):
                 ipEmbed.add_field(name=f'{key} : ', value=f'{value}')
             await context.message.channel.send(embed=ipEmbed)
 
+def is_valid(tags):
+    blacklisted_tags = [
+        "gore",
+        "scat",
+        "watersports",
+        "fart",
+        "fart_fetish",
+        "fart_cloud",
+        "vore",
+        "diaper",
+        "peeing"
+    ]
+
+    if "cub" in tags or "young" in tags:
+        return False
+    elif any(x in tags for x in blacklisted_tags):
+        return False
+    else:
+        return True
+
 @client.command(name="post", pass_context = True)
 async def post(context, postID=None):
     senderMsg = context.message
     _is_artist = False
     if postID == None:
-        await context.message.channel.send('Please make sure you specify a post ID!')
+        await context.message.channel.send('Please make sure you specify a query! This may be an artist name, post ID, or just a tag, you can chain tags together. For example: canine+male')
     elif postID == 'random':
         rq = requests.get(f'https://e621.net/posts/random.json?', headers=headersE6, auth=('Matix', f'{e6Key}'))
+        while not is_valid(rq.json()['post']['tags']['general']):
+            rq = requests.get(f'https://e621.net/posts/random.json?', headers=headersE6, auth=('Matix', f'{e6Key}'))
+
     elif str(postID).isdigit():
         rq = requests.get(f'https://e621.net/posts/{postID}.json', headers=headersE6, auth=('Matix', f'{e6Key}'))
     else:
@@ -384,6 +407,7 @@ async def post(context, postID=None):
             postid = rqJSON['posts'][0]['id']
             artist = rqJSON['posts'][0]['tags']['artist']
             rating = rqJSON['posts'][0]['rating']
+            res = f"{rqJSON['posts'][0]['file']['width']}x{rqJSON['posts'][0]['file']['height']}"
         else:
             url = rqJSON['post']['file']['url']
             md5sum = rqJSON['post']['file']['md5']
@@ -392,6 +416,8 @@ async def post(context, postID=None):
             postid = rqJSON['post']['id']
             artist = rqJSON['post']['tags']['artist']
             rating = rqJSON['post']['rating']
+            res = f"{rqJSON['post']['file']['width']}x{rqJSON['post']['file']['height']}"
+
         
         if "cub" in tags or "young" in tags:
             await senderMsg.delete()
@@ -427,12 +453,12 @@ async def post(context, postID=None):
             if url == None:
                 await context.message.channel.send('This post was deleted from e6.')
             else:
-                open_content = f'Open content ({url.split(".")[-1].upper()})'
+                open_content = f'Open content ({res} {url.split(".")[-1].upper()})'
 
-                if rating == 'e' and (context.channel.is_nsfw()) == False:
+                if rating == 'e' and not context.channel.is_nsfw():
                     await context.message.channel.send('Explicit images are not allowed here.')
                     
-                elif rating == 'e' and (context.channel.is_nsfw()) == True:
+                elif rating == 'e' and context.channel.is_nsfw():
                     postEmbed = discord.Embed(title=f'{open_content}', url=f'{url}', colour = e6colour)
                     postEmbed.add_field(name='Post stats: ', value=f'e621 | Post: {postid} | Score: {score} | Artist(s): {artist}', inline=False)
                     postEmbed = postEmbed.set_image(url=post)
@@ -1203,6 +1229,10 @@ async def on_message(message):
     await client.process_commands(message)
 
 if checkForTable() and checkForGamesTable():
+    if args.verbose:
+        print('Verbose mode active.')
+    if args.log:
+        print('Chat logging active.')
     client.load_extension('cogs.encodings')
     client.load_extension('cogs.fernet')
     client.load_extension('cogs.games')
