@@ -26,7 +26,7 @@ class fernetCommands(commands.Cog):
         try:
             return cur.fetchone()[0]
         except TypeError:
-            return 'Failed'
+            return 'failed'
 
     def createAndAdd(self, user, k):
         cur.execute(f"INSERT INTO keys VALUES (?, ?, ?, ?)", (f"{user}", f"{k}", 0, ""))
@@ -173,18 +173,30 @@ class fernetCommands(commands.Cog):
     async def enable_multikey(self, context):
         author = str(context.message.author)
         authorid = str(context.message.author.id)
-        self.changeMultikey(authorid, 'e')
-        print(f'User {author} has enabled multikey.')
-        await context.message.channel.send('Multikey enabled!')
+        if self.checkForMultikey(authorid) == (0,):
+            self.changeMultikey(authorid, 'e')
+            print(f'User {author} has enabled multikey.')
+            await context.message.channel.send('Multikey enabled!')
+            keys = self.fetchKey(authorid).split(' ')
+            keyEmbed = discord.Embed(title='Fernet keys: ')
+            for keynum, key in enumerate(keys, 1):
+                keyEmbed.add_field(name=f'Key {keynum}: ', value=f'`{key}`', inline=False)
+            
+            await context.message.author.send(embed=keyEmbed)
+        else:
+            await context.message.channel.send(f'You already have multikey enabled.')
     
     @commands.command()
     async def disable_multikey(self, context):
         author = str(context.message.author)
         authorid = str(context.message.author.id)
-        nk = self.changeMultikey(authorid, 'd')
-        print(f'User {author} has disabled multikey.\nKey: {nk}')
-        await context.message.channel.send('Multikey disabled!')
-        await context.message.author.send(f'Your new key is: `{nk}`')
+        if self.checkForMultikey(authorid) == (1,):
+            nk = self.changeMultikey(authorid, 'd')
+            print(f'User {author} has disabled multikey.\nKey: {nk}')
+            await context.message.channel.send('Multikey disabled!')
+            await context.message.author.send(f'Your new key is: `{nk}`')
+        else:
+            await context.message.channel.send(f'You do not have mutlikey enabled.')
 
     @commands.command()
     async def rotate_msg(self, context):
@@ -218,21 +230,24 @@ class fernetCommands(commands.Cog):
     @commands.command()
     async def key_override(self, context):
         usr = context.message.author.id
-        _overrideAmount = context.message.content.split(' ')[1]
-        error = False
-        try:
-            _overrideAmount = int(_overrideAmount)
-        except ValueError:
-            await context.message.channel.send('Override amount must be an integer.')
-            error = True
+        if self.checkForMultikey(usr) == (1,):
+            _overrideAmount = context.message.content.split(' ')[1]
+            error = False
+            try:
+                _overrideAmount = int(_overrideAmount)
+            except ValueError:
+                await context.message.channel.send('Override amount must be an integer.')
+                error = True
 
-        if not error:
-            if _overrideAmount > 10 or _overrideAmount < 3:
-                await context.message.channel.send('Override amount must be between 3-10')
-            else:
-                self.changeMultikey(usr, 'e', _overrideAmount)
-                await context.message.channel.send(f'Keys in MultiFernet rotation overridden to {_overrideAmount}')
-    
+            if not error:
+                if _overrideAmount > 10 or _overrideAmount < 3:
+                    await context.message.channel.send('Override amount must be between 3-10')
+                else:
+                    self.changeMultikey(usr, 'e', _overrideAmount)
+                    await context.message.channel.send(f'Keys in MultiFernet rotation overridden to {_overrideAmount}')
+        else:
+            await context.message.channel.send('You do not have multikey enabled.')
+
     @commands.command()
     async def rotation(self, context):
         if self.checkForMultikey(context.message.author.id) == (1,):
